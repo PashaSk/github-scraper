@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DbService.Mongo\MongoDb\MongoDb.csproj" />
+    <ProjectReference Include="..\DbService.Mongo\MongoDb.csproj" />
     <ProjectReference Include="..\DbService.Postgre\PostgreDb.csproj" />
     <ProjectReference Include="..\DomainObjects\DomainObjects.csproj" />
   </ItemGroup>
