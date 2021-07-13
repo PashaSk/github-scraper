@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClassScraper.DomainObjects.Github;
+using System;
 
 namespace ClassScraper.DomainObjects.API
 {    
@@ -6,8 +7,10 @@ namespace ClassScraper.DomainObjects.API
     {        
         public string FilterName { get;  set; }     
         public string FilterId { get; set; }
+        public string FilterFileId { get; set; }
         public SearchGroupBy GroupBy { get; set; }
         public int Page { get; set; }
+        public TermType TermType { get; set; }
     }
 
     [Flags]

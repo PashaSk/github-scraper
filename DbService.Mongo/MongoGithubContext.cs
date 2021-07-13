@@ -34,26 +34,12 @@ namespace ClassScraper.DbLayer.MongoDb
         }
         public async Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel search, CancellationToken ctoken = default)
         {
-            var filter = Builders<MongoFileEntity>.Filter.Empty;
-            if (search.FilterName != null)
-            {
-                filter = Builders<MongoFileEntity>.Filter.Regex(r => r.Name, new MongoDB.Bson.BsonRegularExpression(search.FilterName, "gi"));
-            }
-
-            var pipeline1 = PipelineDefinition<MongoFileEntity, BsonDocument>.Create(
-                new BsonDocument() { { "$skip", search.Page * PAGE_SIZE } },
-                new BsonDocument() { { "$limit", PAGE_SIZE } }
-                );
-            var pipeline2 = PipelineDefinition<MongoFileEntity, BsonDocument>.Create(
-                    "{ $count : 'count'}"
-                );
-
-            var facet1 = AggregateFacet.Create("data", pipeline1);
-            var facet2 = AggregateFacet.Create("totalCount", pipeline2);
+            var filter = BuildFileFilter(search);
+            var facets = GetFacets<MongoFileEntity>(search);
 
             var result = await WithTimeoutAsync(async () => await files.Aggregate()
                 .Match(filter)
-                .Facet<BsonDocument>(new[] { facet1, facet2 })
+                .Facet<BsonDocument>(facets)
                 .AppendStage<BsonDocument>("{ $addFields: { total : { $arrayElemAt:[\"$totalCount.count\",0]}}}")
                 .AppendStage<MongoListSearchResult<MongoFileEntity, FileEntity>>("{ $unset:  \"totalCount\" }").SingleAsync(ctoken));
 
@@ -62,27 +48,12 @@ namespace ClassScraper.DbLayer.MongoDb
 
         public async Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel search, CancellationToken ctoken = default)
         {
-
-            var filter = Builders<MongoTermEntity>.Filter.Empty;
-            if (search.FilterName != null)
-            {
-                filter = Builders<MongoTermEntity>.Filter.Regex(r => r.Name, new BsonRegularExpression(search.FilterName, "gi"));
-            }
-
-            var pipeline1 = PipelineDefinition<MongoTermEntity, BsonDocument>.Create(
-                new BsonDocument() { { "$skip", search.Page * PAGE_SIZE } },
-                new BsonDocument() { { "$limit", PAGE_SIZE } }
-                );
-            var pipeline2 = PipelineDefinition<MongoTermEntity, BsonDocument>.Create(
-                    "{ $count : 'count'}"
-                );
-
-            var facet1 = AggregateFacet.Create("data", pipeline1);
-            var facet2 = AggregateFacet.Create("totalCount", pipeline2);
+            var filter = BuildTermFilter(search);
+            var facets = GetFacets<MongoTermEntity>(search);
 
             var result = await WithTimeoutAsync(async () => await terms.Aggregate()
                 .Match(filter)
-                .Facet<BsonDocument>(new[] { facet1, facet2 })
+                .Facet<BsonDocument>(facets)
                 .AppendStage<BsonDocument>("{ $addFields: { total : { $arrayElemAt:[\"$totalCount.count\",0]}}}")
                 .AppendStage<MongoListSearchResult<MongoTermEntity, TermEntity>>("{ $unset:  \"totalCount\" }").SingleAsync(ctoken));
 
@@ -105,7 +76,35 @@ namespace ClassScraper.DbLayer.MongoDb
             await Task.WhenAll(files.InsertOneAsync(filesInsert, null), terms.InsertManyAsync(termsInsert, null, ctoken));
             return true;
         }
+        public async Task<FileEntity> GetFileAsync(SearchModel search, CancellationToken ctoken = default)
+        {
+            FileEntity result = null;
+            var filter = BuildFileFilter(search);
+            var file = await WithTimeoutAsync(async () => await files.Find(filter).FirstOrDefaultAsync(ctoken));
+            if (file != null)
+            {
+                var terms = await WithTimeoutAsync(async () => await this.terms.Find(t => t.FileEntityId == file.ID).ToListAsync(ctoken));
 
+                result = file.ToDomain();
+                result.Terms = terms.Select(t => t.ToDomain());
+            }
+
+            return result;
+        }
+
+        public async Task<TermEntity> GetTermAsync(SearchModel search, CancellationToken ctoken = default)
+        {
+            TermEntity result = null;
+            var filter = BuildTermFilter(search);
+            var term = await WithTimeoutAsync(async () => await terms.Find(filter).FirstOrDefaultAsync(ctoken));
+            if (term != null)
+            {
+                var file = await WithTimeoutAsync(async () => await files.Find(f => f.ID == term.FileEntityId).FirstAsync(ctoken));
+                term.FileEntity = file?.ToDomain();
+                result = term.ToDomain();
+            }
+            return result;
+        }
         private async Task<TResult> WithTimeoutAsync<TResult>(Func<Task<TResult>> task, int timeout = MONGO_TIMEOUT_MS)
         {
             TResult result;
@@ -125,33 +124,60 @@ namespace ClassScraper.DbLayer.MongoDb
             }
         }
 
-        public async Task<FileEntity> GetFileAsync(SearchModel search, CancellationToken ctoken = default)
+        private FilterDefinition<MongoFileEntity> BuildFileFilter(SearchModel search)
         {
-            FileEntity result = null;
-            var file = await WithTimeoutAsync(async () => await files.Find(f => f.ID == search.FilterId).FirstOrDefaultAsync(ctoken));
-            if (file != null)
-            {
-                var terms = await WithTimeoutAsync(async () => await this.terms.Find(t => t.FileEntityId == file.ID).ToListAsync(ctoken));
+            var filterAnd = new List<FilterDefinition<MongoFileEntity>>() { Builders<MongoFileEntity>.Filter.Empty };
 
-                result = file.ToDomain();
-                result.Terms = terms.Select(t => t.ToDomain());
+            if (search.FilterId != null)
+            {
+                filterAnd.Add(Builders<MongoFileEntity>.Filter.Where(r => r.ID == search.FilterId));
+            }
+            if (search.FilterName != null)
+            {
+                filterAnd.Add(Builders<MongoFileEntity>.Filter.Regex(r => r.Name, new BsonRegularExpression(search.FilterName, "gi")));
             }
 
-            return result;
+            return Builders<MongoFileEntity>.Filter.And(filterAnd);
+        }
+        private FilterDefinition<MongoTermEntity> BuildTermFilter(SearchModel search)
+        {
+            var filterAnd = new List<FilterDefinition<MongoTermEntity>>() { Builders<MongoTermEntity>.Filter.Empty };
+
+            if (search.FilterName != null)
+            {
+                filterAnd.Add(Builders<MongoTermEntity>.Filter.Regex(r => r.Name, new BsonRegularExpression(search.FilterName, "gi")));
+            }
+            if (search.FilterId != null)
+            {
+                filterAnd.Add(Builders<MongoTermEntity>.Filter.Where(r => r.ID == search.FilterId));
+            }
+            if (search.TermType != TermType.Undefined)
+            {
+                filterAnd.Add(Builders<MongoTermEntity>.Filter.Where(r => r.TermType == search.TermType));
+            }
+            if (search.FilterFileId != null)
+            {
+                filterAnd.Add(Builders<MongoTermEntity>.Filter.Where(r => r.FileEntityId == search.FilterFileId));
+            }
+
+            return Builders<MongoTermEntity>.Filter.And(filterAnd);
+        }
+        private AggregateFacet<T>[] GetFacets<T>(SearchModel search)
+        {
+            var pipeline1 = PipelineDefinition<T, BsonDocument>.Create(
+                new BsonDocument() { { "$skip", search.Page * PAGE_SIZE } },
+                new BsonDocument() { { "$limit", PAGE_SIZE } }
+                );
+            var pipeline2 = PipelineDefinition<T, BsonDocument>.Create(
+                    "{ $count : 'count'}"
+                );
+
+            var facet1 = AggregateFacet.Create("data", pipeline1);
+            var facet2 = AggregateFacet.Create("totalCount", pipeline2);
+
+            return new[] { facet1, facet2 };
         }
 
-        public async Task<TermEntity> GetTermAsync(SearchModel search, CancellationToken ctoken = default)
-        {
-            TermEntity result = null;
-            var term = await WithTimeoutAsync(async () => await terms.Find(t => t.ID == search.FilterId).FirstOrDefaultAsync(ctoken));
-            if (term != null)
-            {
-                var file = await WithTimeoutAsync(async () => await files.Find(f => f.ID == term.FileEntityId).FirstAsync(ctoken));
-                term.FileEntity = file?.ToDomain();
-                result = term.ToDomain();
-            }
-            return result;
-        }
     }
     public static class ServiceCollectionExtensions
     {

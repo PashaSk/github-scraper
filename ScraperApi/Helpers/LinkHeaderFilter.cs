@@ -25,10 +25,15 @@ namespace ScraperApi.Helpers
                 {
                     var totalCount = ((IListSearchResult)result).TotalCount;
                     var baseQuery = HttpUtility.ParseQueryString(context.HttpContext.Request.QueryString.ToString());
-                    if (baseQuery[ApiSearchModel.PAGE_QUERY] != null && int.TryParse(baseQuery[ApiSearchModel.PAGE_QUERY], out int page))
+                    int page = 1;
+                    if (baseQuery[ApiSearchModel.PAGE_QUERY] != null)
                     {
-                        AppendLinkHeaders(context.HttpContext, totalCount, page, baseQuery);
+                        if (int.TryParse(baseQuery[ApiSearchModel.PAGE_QUERY], out int parseInt)) {
+                            page = parseInt;
+                        }
                     }
+
+                    AppendLinkHeaders(context.HttpContext, totalCount, page, baseQuery);
                 }
 
             }
@@ -57,7 +62,7 @@ namespace ScraperApi.Helpers
             }
 
             //rel='next'
-            var totalPages = Math.Floor((double)totalCount / 5) + 1;
+            var totalPages = Math.Ceiling((double)totalCount / 5);
             if (page < totalPages)
             {
                 baseQuery.Set(ApiSearchModel.PAGE_QUERY, (page + 1).ToString());
