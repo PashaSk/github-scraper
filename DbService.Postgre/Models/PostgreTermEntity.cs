@@ -20,14 +20,14 @@ namespace DbLayer.PostgreService.Models
         public PostgreFileEntity PostgreFileEntity { get; set; }
 
         public PostgreTermEntity() { }
-        public TermEntity ToDomain()
+        public TermEntity ToDomain(bool initFile = true)
         {
             return new TermEntity()
             {
                 ID = Guid.Parse(ID),
                 Name = Name,
                 TermType = TermType,
-                FileEntity = PostgreFileEntity.ToDomain()
+                FileEntity = initFile ? PostgreFileEntity.ToDomain() : null
             };
         }
 

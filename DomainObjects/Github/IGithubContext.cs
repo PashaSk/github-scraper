@@ -9,10 +9,11 @@ namespace ClassScraper.DomainObjects.Github
 {
     public interface IGithubContext
     {
-        Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel search, CancellationToken ctoken = default);
-        Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel search, CancellationToken ctoken = default);
-        Task<FileEntity> GetFileAsync(string file_id, CancellationToken ctoken = default);
-        Task<bool> SaveTermsAsync(FileEntity file, IEnumerable<TermEntity> terms, CancellationToken ctoken = default);        
+        Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel search, CancellationToken ctoken);
+        Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel search, CancellationToken ctoken);
+        Task<FileEntity> GetFileAsync(SearchModel search, CancellationToken ctoken);
+        Task<TermEntity> GetTermAsync(SearchModel search, CancellationToken ctoken);
+        Task<bool> SaveTermsAsync(FileEntity file, IEnumerable<TermEntity> terms, CancellationToken ctoken);        
     }
 }
     

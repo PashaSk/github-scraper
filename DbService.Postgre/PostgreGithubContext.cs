@@ -30,21 +30,47 @@ namespace ClassScraper.DbLayer.PostgreService
         DbSet<PostgreFileEntity> Files { get; set; }
         DbSet<PostgreTermEntity> Terms { get; set; }
 
-        public Task<FileEntity> GetFileAsync(string file_id, CancellationToken ctoken = default)
+        public async Task<FileEntity> GetFileAsync(SearchModel search, CancellationToken ctoken = default)
         {
-            throw new NotImplementedException();
-        }        
+            FileEntity result = null;
+            var q = this.Set<PostgreFileEntity>()
+                .Where(f => f.ID == search.FilterId)
+                .Join(Terms, f => f.ID, t => t.PostgreFileEntityId, (File, Term) => new { File, Term });
+
+            var list = await q.ToListAsync(ctoken);
+            var terms = list.Select(s => s.Term);
+            if (list.Count > 0)
+            {
+                var file = list.Select(f => f.File).First();
+                file.Terms = terms;
+
+                result = file.ToDomain(false);
+            }
+
+            return result;
+            
+        }
+        public async Task<TermEntity> GetTermAsync(SearchModel search, CancellationToken ctoken = default)
+        {
+            TermEntity result = null;
+            var t = await Terms.Include(t => t.PostgreFileEntity).FirstOrDefaultAsync(t => t.ID == search.FilterId, ctoken);
+            if (t != null)
+            {
+                result = t.ToDomain();
+            }
+            return result;
+        }
 
         public async Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel search, CancellationToken ctoken = default)
         {
             var q = this.Set<PostgreFileEntity>()
                 .Where(f => EF.Functions.ILike(f.Name, $"%{search.FilterName}%"));
 
-            var query = await q                                
+            var query = await q
                 .Select(p => new { T = p, Count = q.Count() })
                 .Skip(search.Page * PER_PAGE)
-                .Take(PER_PAGE)                
-                .ToListAsync(ctoken);
+                .Take(PER_PAGE)
+                .ToListAsync(ctoken);            
 
             var result = new ListSearchResult<FileEntity>()
             {
@@ -54,7 +80,7 @@ namespace ClassScraper.DbLayer.PostgreService
 
 
             return result;
-        }        
+        }
 
         public async Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel search, CancellationToken ctoken = default)
         {
@@ -62,10 +88,10 @@ namespace ClassScraper.DbLayer.PostgreService
                 .Where(f => EF.Functions.ILike(f.Name, $"%{search.FilterName}%"))
                 .Include(p => p.PostgreFileEntity);
 
-            var query = await q                
+            var query = await q
                 .Select(p => new { T = p, Count = q.Count() })
-                .Skip(search.Page *  PER_PAGE)
-                .Take(PER_PAGE)                
+                .Skip(search.Page * PER_PAGE)
+                .Take(PER_PAGE)
                 .ToListAsync(ctoken);
 
             var result = new ListSearchResult<TermEntity>()
@@ -77,11 +103,11 @@ namespace ClassScraper.DbLayer.PostgreService
             return result;
         }
 
-        public async Task<bool> SaveTermsAsync(FileEntity file, IEnumerable<TermEntity> terms, CancellationToken cancellationToken = default)
+        public async Task<bool> SaveTermsAsync(FileEntity file, IEnumerable<TermEntity> terms, CancellationToken ctoken = default)
         {
             Files.Add(new PostgreFileEntity(file));
             Terms.AddRange(terms.Select(t => new PostgreTermEntity(t)));
-            await this.SaveChangesAsync(cancellationToken);
+            await this.SaveChangesAsync(ctoken);
 
             return await Task.FromResult(true);
         }
@@ -90,7 +116,7 @@ namespace ClassScraper.DbLayer.PostgreService
         {
             modelBuilder.HasPostgresEnum<TermType>();
         }
-        
+
 
 #if migration
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

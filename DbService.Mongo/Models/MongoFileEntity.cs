@@ -25,6 +25,8 @@ namespace ClassScraper.DbLayer.MongoDb.Models
         [BsonElement("rn")]
         public string RepositoryName { get; set; }
 
+        [BsonIgnore]
+        public IEnumerable<TermEntity> Terms { get; set; } = new List<TermEntity>();
         public FileEntity ToDomain()
         {
             return new FileEntity()

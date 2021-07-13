@@ -177,7 +177,7 @@ namespace ClassScraper.AspGithubClassScraper.Worker
 
                 try
                 {
-                    await _repository.SaveEntitiesBatch(terms, fileEntity, _cancelationToken);
+                    await _repository.SaveEntitiesBatch(terms, fileEntity, CancellationToken.None);
                 }
                 catch (Exception e)
                 {

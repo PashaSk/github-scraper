@@ -23,56 +23,9 @@ namespace ClassScraper.Repository.EntityService
             )
         {
             _services = services;
-            //using (var scope = _services.CreateScope())
-            //{
-            //    var context =
-            //        scope.ServiceProvider
-            //            .GetRequiredService<GithubContext>();
-
-            //    var file = new FileEntity()
-            //    {
-            //        Name = "test",
-            //        OwnerName = "owner-test",
-            //        RepositoryName = "repo-test",
-            //        Path = "",
-            //        Url = ""
-            //    };
-            //    context.Files.Add(file);
-            //    var newFile = new FileEntity()
-            //    {
-            //        Name = "test2",
-            //        OwnerName = "owner-test2",
-            //        RepositoryName = "repo-test2",
-            //        Path = "",
-            //        Url = ""
-            //    };
-            //    var term = new TermEntity()
-            //    {
-            //        Name = "Term Name",
-            //        FileEntity = newFile,
-            //        TermType = TermType.Class
-            //    };
-            //    var term2 = new TermEntity()
-            //    {
-            //        Name = "Term Name 2",
-            //        FileEntity = newFile,
-            //        TermType = TermType.Interface
-            //    };
-            //    context.Files.Add(newFile);
-            //    context.Terms.Add(term);
-            //    context.Terms.Add(term2);
-
-            //    context.SaveChanges();
-
-            //    foreach(var t in context.Terms)
-            //    {
-            //        Console.WriteLine(t.Name);
-            //        Console.WriteLine(t.TermType);
-            //    }
-            //}
         }
 
-        public async Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel filter)
+        public async Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel filter, CancellationToken ctoken = default)
         {
             ListSearchResult<FileEntity> result;
             using (var scope = _services.CreateScope())
@@ -81,13 +34,13 @@ namespace ClassScraper.Repository.EntityService
                  scope.ServiceProvider
                      .GetRequiredService<IGithubContext>();
 
-                result = await context.GetFilesAsync(filter);
+                result = await context.GetFilesAsync(filter, ctoken).ConfigureAwait(false);
             }
 
             return result;
         }
 
-        public async Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel filter)
+        public async Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel filter, CancellationToken ctoken = default)
         {
             ListSearchResult<TermEntity> result;
             using (var scope = _services.CreateScope())
@@ -95,13 +48,13 @@ namespace ClassScraper.Repository.EntityService
                 var context = scope.ServiceProvider
                     .GetRequiredService<IGithubContext>();
 
-                result = await context.GetTermsAsync(filter);
+                result = await context.GetTermsAsync(filter, ctoken).ConfigureAwait(false);
             }
 
             return result;
         }
 
-        public async Task SaveEntitiesBatch(IEnumerable<TermEntity> terms, FileEntity file, CancellationToken cancellationToken)
+        public async Task SaveEntitiesBatch(IEnumerable<TermEntity> terms, FileEntity file, CancellationToken ctoken = default)
         {
             using (var scope = _services.CreateScope())
             {
@@ -109,21 +62,38 @@ namespace ClassScraper.Repository.EntityService
                     scope.ServiceProvider
                         .GetRequiredService<IGithubContext>();
 
-                await context.SaveTermsAsync(file, terms, cancellationToken);
+                await context.SaveTermsAsync(file, terms, ctoken).ConfigureAwait(false);
             }
         }
-        private PostgreGithubContext GetDbContext()
+
+        public async Task<FileEntity> GetFileAsync(SearchModel filter, CancellationToken ctoken = default)
         {
-            PostgreGithubContext context;
+            FileEntity result;
             using (var scope = _services.CreateScope())
             {
-                context =
+                var context =
                     scope.ServiceProvider
-                        .GetRequiredService<PostgreGithubContext>();
+                        .GetRequiredService<IGithubContext>();
+
+                result = await context.GetFileAsync(filter, ctoken).ConfigureAwait(false);
             }
 
-            return context;
+            return result;
         }
+        public async Task<TermEntity> GetTermAsync(SearchModel filter, CancellationToken ctoken = default)
+        {
+            TermEntity result;
+            using (var scope = _services.CreateScope())
+            {
+                var context =
+                    scope.ServiceProvider
+                        .GetRequiredService<IGithubContext>();
+
+                result = await context.GetTermAsync(filter, ctoken).ConfigureAwait(false);
+            }
+
+            return result;
+        }        
     }
 
     public static class ServiceCollectionExtensions

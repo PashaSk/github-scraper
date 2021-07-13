@@ -24,6 +24,6 @@ namespace ClassScraper.DomainObjects.Github
         [JsonProperty("repository")]
         public string RepositoryName { get; set; }
         [JsonProperty("terms", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string Terms { get; set; }
+        public IEnumerable<TermEntity> Terms { get; set; }
     }
 }

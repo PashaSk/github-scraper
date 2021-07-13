@@ -10,8 +10,10 @@ namespace ClassScraper.Repository.EntityService
 {
     public interface IEntityRepository
     {
-        public Task SaveEntitiesBatch(IEnumerable<TermEntity> terms, FileEntity file, CancellationToken cancellationToken);        
-        public Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel filter);
-        public Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel filter);
+        public Task SaveEntitiesBatch(IEnumerable<TermEntity> terms, FileEntity file, CancellationToken ctoken = default);        
+        public Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel filter, CancellationToken ctoken = default);
+        public Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel filter, CancellationToken ctoken = default);
+        public Task<FileEntity> GetFileAsync(SearchModel filter, CancellationToken ctoken = default);
+        public Task<TermEntity> GetTermAsync(SearchModel filter, CancellationToken ctoken= default);
     }
 }

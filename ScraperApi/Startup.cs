@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ScraperApi.Helpers;
 using Serilog;
 using Serilog.Core;
 using System;
@@ -31,8 +32,12 @@ namespace ScraperApi
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {            
-            services.AddControllers().AddNewtonsoftJson();
+        {
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(new ExceptionFilter());
+            }).AddNewtonsoftJson();
+
             services.AddEntityService(Configuration, Log.Logger);
             services.CheckIndexes(Configuration, Log.Logger);
         }
@@ -47,12 +52,12 @@ namespace ScraperApi
             else
             {
                 app.UseHsts();
-            }            
+            }
             app.UseHttpsRedirection();
             app.UseRouting();
-            
+
             app.Use(async (context, next) =>
-            {                
+            {
                 var section = Configuration["Users"];
                 if (section == null)
                 {
@@ -66,8 +71,9 @@ namespace ScraperApi
                     var temp = str.Split('=');
                     users.Add(temp[0], temp[1]);
                 }
-                
-                if (context.Request.Headers.TryGetValue("Authorization", out var values)) {
+
+                if (context.Request.Headers.TryGetValue("Authorization", out var values))
+                {
                     var authString = Encoding.UTF8.GetString(Convert.FromBase64String(values.First().Substring(6)));
                     var authUser = authString.Split(":");
 
@@ -83,7 +89,7 @@ namespace ScraperApi
             });
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

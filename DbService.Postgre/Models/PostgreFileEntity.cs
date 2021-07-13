@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DbLayer.PostgreService.Models
 {
@@ -11,14 +13,17 @@ namespace DbLayer.PostgreService.Models
         [Key]
         public string ID { get; set; }
         [MaxLength(100)]
-        public string Name { get; set; }        
+        public string Name { get; set; }
         public string Path { get; set; }
         public string Url { get; set; }
         public string HtmlUrl { get; set; }
         public string OwnerName { get; set; }
         public string RepositoryName { get; set; }
 
-        public FileEntity ToDomain()
+        [NotMapped]
+        public IEnumerable<PostgreTermEntity> Terms { get; set; }
+
+        public FileEntity ToDomain(bool initInnerFile = true)
         {
             return new FileEntity()
             {
@@ -28,7 +33,8 @@ namespace DbLayer.PostgreService.Models
                 Url = Url,
                 HtmlUrl = HtmlUrl,
                 OwnerName = OwnerName,
-                RepositoryName = RepositoryName
+                RepositoryName = RepositoryName,
+                Terms = Terms != null ? Terms.Select(t => t.ToDomain(initInnerFile)) : null
             };
         }
         public PostgreFileEntity(FileEntity fileEntity)
@@ -41,6 +47,6 @@ namespace DbLayer.PostgreService.Models
             OwnerName = fileEntity.OwnerName;
             RepositoryName = fileEntity.RepositoryName;
         }
-        public PostgreFileEntity() {}
+        public PostgreFileEntity() { }
     }
 }
