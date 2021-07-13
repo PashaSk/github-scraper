@@ -11,8 +11,6 @@ using ClassScraper.DbLayer.MongoDb.Models;
 using MongoDB.Bson;
 using Serilog;
 using ClassScraper.DomainObjects.API;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 
 namespace ClassScraper.DbLayer.MongoDb
 {

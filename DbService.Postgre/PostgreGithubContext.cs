@@ -33,8 +33,7 @@ namespace ClassScraper.DbLayer.PostgreService
         public async Task<FileEntity> GetFileAsync(SearchModel search, CancellationToken ctoken = default)
         {
             FileEntity result = null;
-            var q = this.Set<PostgreFileEntity>()
-                .Where(f => f.ID == search.FilterId)
+            var q = BuildFileWhereClause(search)
                 .Join(Terms, f => f.ID, t => t.PostgreFileEntityId, (File, Term) => new { File, Term });
 
             var list = await q.ToListAsync(ctoken);
@@ -48,12 +47,12 @@ namespace ClassScraper.DbLayer.PostgreService
             }
 
             return result;
-            
+
         }
         public async Task<TermEntity> GetTermAsync(SearchModel search, CancellationToken ctoken = default)
         {
             TermEntity result = null;
-            var t = await Terms.Include(t => t.PostgreFileEntity).FirstOrDefaultAsync(t => t.ID == search.FilterId, ctoken);
+            var t = await BuildTermWhereClause(search).Include(t => t.PostgreFileEntity).FirstOrDefaultAsync(ctoken);
             if (t != null)
             {
                 result = t.ToDomain();
@@ -63,41 +62,37 @@ namespace ClassScraper.DbLayer.PostgreService
 
         public async Task<ListSearchResult<FileEntity>> GetFilesAsync(SearchModel search, CancellationToken ctoken = default)
         {
-            var q = this.Set<PostgreFileEntity>()
-                .Where(f => EF.Functions.ILike(f.Name, $"%{search.FilterName}%"));
-
+            var q = BuildFileWhereClause(search);
+            var count = await q.CountAsync();
             var query = await q
-                .Select(p => new { T = p, Count = q.Count() })
                 .Skip(search.Page * PER_PAGE)
                 .Take(PER_PAGE)
-                .ToListAsync(ctoken);            
+                .ToListAsync(ctoken);
 
             var result = new ListSearchResult<FileEntity>()
             {
-                Data = query.Select(f => f.T.ToDomain()),
-                TotalCount = query.FirstOrDefault()?.Count ?? 0
+                Data = query.Select(f => f.ToDomain()),
+                TotalCount = count
             };
-
 
             return result;
         }
 
         public async Task<ListSearchResult<TermEntity>> GetTermsAsync(SearchModel search, CancellationToken ctoken = default)
         {
-            var q = this.Set<PostgreTermEntity>()
-                .Where(f => EF.Functions.ILike(f.Name, $"%{search.FilterName}%"))
+            var q = BuildTermWhereClause(search)
                 .Include(p => p.PostgreFileEntity);
 
-            var query = await q
-                .Select(p => new { T = p, Count = q.Count() })
+            var count = await q.CountAsync();
+            var query = await q            
                 .Skip(search.Page * PER_PAGE)
                 .Take(PER_PAGE)
                 .ToListAsync(ctoken);
 
             var result = new ListSearchResult<TermEntity>()
             {
-                Data = query.Select(r => r.T.ToDomain()),
-                TotalCount = query.FirstOrDefault()?.Count ?? 0
+                Data = query.Select(r => r.ToDomain()),
+                TotalCount = count
             };
 
             return result;
@@ -117,6 +112,42 @@ namespace ClassScraper.DbLayer.PostgreService
             modelBuilder.HasPostgresEnum<TermType>();
         }
 
+        private IQueryable<PostgreFileEntity> BuildFileWhereClause(SearchModel search)
+        {
+            var q = this.Set<PostgreFileEntity>().AsQueryable();
+            if (search.FilterId != null)
+            {
+                q = q.Where(f => f.ID == search.FilterId);
+            }
+            if (search.FilterName != null)
+            {
+                q = q.Where(f => EF.Functions.ILike(f.Name, $"%{search.FilterName}%"));
+            }
+
+            return q;
+        }
+        private IQueryable<PostgreTermEntity> BuildTermWhereClause(SearchModel search)
+        {
+            var q = this.Set<PostgreTermEntity>().AsQueryable();
+            if (search.FilterId != null)
+            {
+                q = q.Where(f => f.ID == search.FilterId);
+            }
+            if (search.FilterName != null)
+            {
+                q = q.Where(f => EF.Functions.ILike(f.Name, $"%{search.FilterName}%"));
+            }
+            if (search.FilterFileId != null)
+            {
+                q = q.Where(f => f.PostgreFileEntityId == search.FilterFileId);
+            }
+            if (search.TermType != TermType.Undefined)
+            {
+                q = q.Where(f => f.TermType == search.TermType);
+            }
+
+            return q;
+        }
 
 #if migration
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
