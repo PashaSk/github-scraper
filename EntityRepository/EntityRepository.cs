@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -93,7 +92,7 @@ namespace ClassScraper.Repository.EntityService
             }
 
             return result;
-        }        
+        }
     }
 
     public static class ServiceCollectionExtensions

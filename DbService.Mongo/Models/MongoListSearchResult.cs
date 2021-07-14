@@ -1,20 +1,19 @@
 ﻿using ClassScraper.DomainObjects.Github;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Linq;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace ClassScraper.DbLayer.MongoDb.Models
 {
 
     [BsonIgnoreExtraElements]
-    public class MongoListSearchResult<T,D> where T: IMongoEntity<D>
+    public class MongoListSearchResult<T, D> where T : IMongoEntity<D>
     {
         [BsonElement("data")]
-        public IEnumerable<T> Data { get; set; } 
+        public IEnumerable<T> Data { get; set; }
         [BsonElement("total")]
         public int TotalCount { get; set; }
-        
+
         public ListSearchResult<D> ToDomain()
         {
             return new ListSearchResult<D>()

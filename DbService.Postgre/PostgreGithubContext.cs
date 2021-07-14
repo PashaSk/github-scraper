@@ -6,10 +6,8 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -84,7 +82,7 @@ namespace ClassScraper.DbLayer.PostgreService
                 .Include(p => p.PostgreFileEntity);
 
             var count = await q.CountAsync();
-            var query = await q            
+            var query = await q
                 .Skip(search.Page * PER_PAGE)
                 .Take(PER_PAGE)
                 .ToListAsync(ctoken);

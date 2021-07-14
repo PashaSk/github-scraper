@@ -1,18 +1,15 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace ClassScraper.DomainObjects.Github
 {
     [JsonObject]
     public class TermEntity : IDomainEntity
-    {        
+    {
         [JsonProperty("id")]
-        public Guid ID { get;  set; }
+        public Guid ID { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
 

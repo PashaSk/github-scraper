@@ -1,5 +1,4 @@
-﻿using ClassScraper.DomainObjects.API;
-using ClassScraper.DomainObjects.Github;
+﻿using ClassScraper.DomainObjects.Github;
 using ClassScraper.Repository.EntityService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace ScraperApi.Controllers
-{    
+{
     [Route("api/[controller]/[action]")]
     public class EntityController : ControllerBase
     {

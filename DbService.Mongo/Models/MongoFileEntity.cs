@@ -3,7 +3,6 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ClassScraper.DbLayer.MongoDb.Models
 {
@@ -39,8 +38,8 @@ namespace ClassScraper.DbLayer.MongoDb.Models
                 RepositoryName = RepositoryName,
                 HtmlUrl = HtmlUrl
             };
-        }        
-     
+        }
+
         public MongoFileEntity(FileEntity fileEntity)
         {
             ID = fileEntity.ID.ToString();

@@ -1,16 +1,12 @@
-﻿using AspGithubClassScaper.Test.Helpers.Theory;
-using ClassScraper.AspGithubClassScraper.Utils;
-using System;
+﻿using ClassScraper.AspGithubClassScraper.Utils;
 using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace AspGithubClassScaper.Test.UtilsTest
 {
     public class AspTermsExtractorTest
     {
-        AspTermsExtractor _extractor;        
+        AspTermsExtractor _extractor;
         public AspTermsExtractorTest()
         {
             _extractor = new AspTermsExtractor();
@@ -22,7 +18,7 @@ namespace AspGithubClassScaper.Test.UtilsTest
             Assert.NotNull(_extractor);
         }
 
-        [Fact]        
+        [Fact]
         public void CheckMultipleClasses()
         {
             var terms = _extractor.ExtractFileTerms(MiltipleClasses);

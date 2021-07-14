@@ -2,11 +2,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ClassScraper.AspGithubClassScraper.Utils
 {
@@ -75,7 +72,7 @@ namespace ClassScraper.AspGithubClassScraper.Utils
 
         public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
         {
-            foreach(var variable in node.Declaration.Variables)
+            foreach (var variable in node.Declaration.Variables)
             {
                 TermList.Add(new TermEntity()
                 {

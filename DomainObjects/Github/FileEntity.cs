@@ -1,14 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace ClassScraper.DomainObjects.Github
 {
     [JsonObject]
-    public class FileEntity: IDomainEntity
-    {          
+    public class FileEntity : IDomainEntity
+    {
         [JsonProperty("id")]
         public Guid ID { get; set; }
         [JsonProperty("name")]

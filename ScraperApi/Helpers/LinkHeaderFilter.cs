@@ -3,13 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Primitives;
 using ScraperApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace ScraperApi.Helpers
@@ -28,7 +26,8 @@ namespace ScraperApi.Helpers
                     int page = 1;
                     if (baseQuery[ApiSearchModel.PAGE_QUERY] != null)
                     {
-                        if (int.TryParse(baseQuery[ApiSearchModel.PAGE_QUERY], out int parseInt)) {
+                        if (int.TryParse(baseQuery[ApiSearchModel.PAGE_QUERY], out int parseInt))
+                        {
                             page = parseInt;
                         }
                     }

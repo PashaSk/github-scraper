@@ -1,9 +1,7 @@
 ﻿using ClassScraper.DomainObjects.Github;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace DbLayer.PostgreService.Models
 {
@@ -15,7 +13,7 @@ namespace DbLayer.PostgreService.Models
         public string Name { get; set; }
         [Column("Type")]
         public TermType TermType { get; set; }
-        
+
         public string PostgreFileEntityId { get; set; }
         public PostgreFileEntity PostgreFileEntity { get; set; }
 
@@ -35,7 +33,7 @@ namespace DbLayer.PostgreService.Models
         {
             ID = domainEntity.ID.ToString();
             Name = domainEntity.Name;
-            TermType = domainEntity.TermType;            
+            TermType = domainEntity.TermType;
             PostgreFileEntityId = domainEntity.FileEntity.ID.ToString();
         }
     }

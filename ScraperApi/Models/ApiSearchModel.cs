@@ -2,10 +2,6 @@
 using ClassScraper.DomainObjects.Github;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ScraperApi.Models
 {
@@ -25,7 +21,7 @@ namespace ScraperApi.Models
         public TermType TermType { get; set; }
         [FromQuery(Name = "file_id")]
         public string FilterFileId { get; set; }
-        
+
         public SearchModel ToDomain()
         {
             return new SearchModel()

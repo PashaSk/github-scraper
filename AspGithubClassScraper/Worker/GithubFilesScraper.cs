@@ -1,23 +1,20 @@
 ﻿using ClassScraper.AspGithubClassScraper.Config;
+using ClassScraper.AspGithubClassScraper.Utils;
+using ClassScraper.DomainObjects.Github;
+using ClassScraper.Repository.EntityService;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Octokit;
+using Polly;
+using Polly.Retry;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using System.Text.Unicode;
-using System.Net.Http;
-using ClassScraper.DomainObjects.Github;
-using ClassScraper.AspGithubClassScraper.Utils;
-using ClassScraper.Repository.EntityService;
-using Polly.Retry;
-using Polly.Extensions.Http;
-using System.Net.Sockets;
-using Polly;
-using System.IO;
 
 namespace ClassScraper.AspGithubClassScraper.Worker
 {

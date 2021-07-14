@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClassScraper.DomainObjects.Github
+﻿namespace ClassScraper.DomainObjects.Github
 {
     public interface IListSearchResult
     {

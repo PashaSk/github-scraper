@@ -2,10 +2,10 @@
 using System;
 
 namespace ClassScraper.DomainObjects.API
-{    
+{
     public struct SearchModel
-    {        
-        public string FilterName { get;  set; }     
+    {
+        public string FilterName { get; set; }
         public string FilterId { get; set; }
         public string FilterFileId { get; set; }
         public SearchGroupBy GroupBy { get; set; }
@@ -16,7 +16,7 @@ namespace ClassScraper.DomainObjects.API
     [Flags]
     public enum SearchGroupBy
     {
-        None= 0,
+        None = 0,
         Type = 1,
         Name = 2
     }

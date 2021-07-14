@@ -1,16 +1,16 @@
-﻿using ClassScraper.DomainObjects.Github;
+﻿using ClassScraper.DbLayer.MongoDb.Models;
+using ClassScraper.DomainObjects.API;
+using ClassScraper.DomainObjects.Github;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using MongoDB.Driver;
-using System.Linq;
+using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using ClassScraper.DbLayer.MongoDb.Models;
-using MongoDB.Bson;
-using Serilog;
-using ClassScraper.DomainObjects.API;
+using System.Threading.Tasks;
 
 namespace ClassScraper.DbLayer.MongoDb
 {

@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-AspGithubClassScraper-9F6522FF-A66E-4904-83B1-EE469916040B</UserSecretsId>
     <RootNamespace>ClassScrapper.AspGithubClassScraper</RootNamespace>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>
