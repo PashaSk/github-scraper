@@ -19,7 +19,7 @@ namespace ClassScraper.DbLayer.MongoDb
         private IMongoCollection<MongoFileEntity> files;
         private IMongoCollection<MongoTermEntity> terms;
         private const int MONGO_TIMEOUT_MS = 1500;
-        private const int PAGE_SIZE = 5;
+        private const int PAGE_SIZE = DomainObjects.Constants.PER_PAGE;
 
         public const string FILES_COLLECTION = "files";
         public const string TERMS_COLLECTION = "terms";

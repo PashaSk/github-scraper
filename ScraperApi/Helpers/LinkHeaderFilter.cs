@@ -32,17 +32,17 @@ namespace ScraperApi.Helpers
                         }
                     }
 
-                    AppendLinkHeaders(context.HttpContext, totalCount, page, baseQuery);
+                    var link = BuildLinkHeaders(context.HttpContext.Request.GetEncodedUrl(), totalCount, page, baseQuery);
+                    context.HttpContext.Response.Headers.Add("Link", string.Join(',', link));
                 }
 
             }
             base.OnResultExecuting(context);
         }
 
-        private void AppendLinkHeaders(HttpContext context, int totalCount, int page, NameValueCollection baseQuery)
+        public IEnumerable<string> BuildLinkHeaders(string uri, int totalCount, int page, NameValueCollection baseQuery)
         {
-            var links = new Dictionary<string, string>();
-            var uri = new Uri(context.Request.GetEncodedUrl());
+            var links = new Dictionary<string, string>();            
             var builder = new UriBuilder(uri);
 
             //rel='first'
@@ -61,7 +61,7 @@ namespace ScraperApi.Helpers
             }
 
             //rel='next'
-            var totalPages = Math.Ceiling((double)totalCount / 5);
+            var totalPages = Math.Ceiling((double)totalCount / ClassScraper.DomainObjects.Constants.PER_PAGE);
             if (page < totalPages)
             {
                 baseQuery.Set(ApiSearchModel.PAGE_QUERY, (page + 1).ToString());
@@ -79,9 +79,7 @@ namespace ScraperApi.Helpers
                 links.Add("last", prev);
             }
 
-
-            var header = links.Select(k => $"<{k.Value}>; rel='{k.Key}'");
-            context.Response.Headers.Add("Link", string.Join(',', header));
+            return links.Select(k => $"<{k.Value}>; rel='{k.Key}'");
         }
     }
 }

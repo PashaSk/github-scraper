@@ -15,7 +15,7 @@ namespace ClassScraper.DbLayer.PostgreService
 {
     public class PostgreGithubContext : DbContext, IGithubContext
     {
-        const int PER_PAGE = 5;
+        const int PER_PAGE = DomainObjects.Constants.PER_PAGE;
         static PostgreGithubContext()
         {
             NpgsqlConnection.GlobalTypeMapper.MapEnum<TermType>();

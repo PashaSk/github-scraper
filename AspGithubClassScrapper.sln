@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspGithubClassScaper.Test",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDb", "DbService.Mongo\MongoDb.csproj", "{DE026766-91F5-4078-B9C9-DBF77178EDC4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScraperApi.Tests", "ScraperApi.Tests\ScraperApi.Tests.csproj", "{05CAFF0F-A303-4B32-A400-4A60F00223FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{DE026766-91F5-4078-B9C9-DBF77178EDC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE026766-91F5-4078-B9C9-DBF77178EDC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE026766-91F5-4078-B9C9-DBF77178EDC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05CAFF0F-A303-4B32-A400-4A60F00223FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05CAFF0F-A303-4B32-A400-4A60F00223FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05CAFF0F-A303-4B32-A400-4A60F00223FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05CAFF0F-A303-4B32-A400-4A60F00223FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{F5CFA0CA-1B92-4EC3-BAC5-085B6A67538D} = {AB672FAE-BEF4-4DF0-85B0-ADFD2225F579}
 		{3A9359EA-1177-4DE7-AB02-E9BF9445A154} = {6625EDC4-93F1-43BF-9187-0E3AA52F35EF}
 		{DE026766-91F5-4078-B9C9-DBF77178EDC4} = {AB672FAE-BEF4-4DF0-85B0-ADFD2225F579}
+		{05CAFF0F-A303-4B32-A400-4A60F00223FD} = {63A7D4E1-2408-4F11-9393-7CFAA0EE9184}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C0182BDB-721A-4C38-8B17-079DDA5B7724}
