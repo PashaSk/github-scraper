@@ -3,21 +3,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DbLayer.PostgreService.Migrations
 {
-    public partial class initial : Migration
+    public partial class initialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:term_type", "undefined,class,interface");
+                .Annotation("Npgsql:Enum:term_type", "undefined,class,interface,enum,property,field");
 
             migrationBuilder.CreateTable(
                 name: "Files",
                 columns: table => new
                 {
                     ID = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     Path = table.Column<string>(type: "text", nullable: true),
                     Url = table.Column<string>(type: "text", nullable: true),
+                    HtmlUrl = table.Column<string>(type: "text", nullable: true),
                     OwnerName = table.Column<string>(type: "text", nullable: true),
                     RepositoryName = table.Column<string>(type: "text", nullable: true)
                 },

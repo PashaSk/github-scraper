@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DbLayer.PostgreService.Migrations
 {
     [DbContext(typeof(PostgreGithubContext))]
-    [Migration("20210707113214_term")]
-    partial class term
+    [Migration("20210715150439_initialCreate")]
+    partial class initialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,7 +31,8 @@ namespace DbLayer.PostgreService.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("OwnerName")
                         .HasColumnType("text");

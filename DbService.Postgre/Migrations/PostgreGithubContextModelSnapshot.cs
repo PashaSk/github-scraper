@@ -29,7 +29,8 @@ namespace DbLayer.PostgreService.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("OwnerName")
                         .HasColumnType("text");

@@ -1,5 +1,6 @@
 ﻿using ClassScraper.DomainObjects.Github;
 using ClassScraper.Repository.EntityService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ScraperApi.Helpers;
@@ -22,7 +23,7 @@ namespace ScraperApi.Controllers
             Repository = repository;
             Logger = logger;
         }
-
+        
         [HttpGet]
         [LinkHeader]
         public async Task<ActionResult<ListSearchResult<TermEntity>>> Terms([FromQuery] ApiSearchModel filter, CancellationToken ctoken)

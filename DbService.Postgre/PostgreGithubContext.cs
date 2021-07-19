@@ -147,12 +147,12 @@ namespace ClassScraper.DbLayer.PostgreService
             return q;
         }
 
-#if migration
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Server=localhost;User Id=postgres;Password=1234;Port=5432;Database=scraper;Include Error Detail=true;");
+            optionsBuilder.UseNpgsql("Server=scaper-api-postgre.postgres.database.azure.com;Database=postgres;Port=5432;User Id=ScraperAdmin@scaper-api-postgre;Password=SncMdl@ArWng1959;Ssl Mode=Require;");
         }
-#endif
+
     }
     public static class ServiceCollectionExtensions
     {
