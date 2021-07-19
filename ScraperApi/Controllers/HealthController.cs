@@ -14,7 +14,7 @@ namespace ScraperApi.Controllers
         [HttpGet]
         public ActionResult Check()
         {
-            return Ok("ok");
+            return Ok("I'm ok");
         }
     }
 }
